@@ -23,11 +23,9 @@ public class MainActivity extends AppCompatActivity {
         TextView mytext = variableBinding.theText;
         Button mybutton = variableBinding.theButton;
         EditText myedit = variableBinding.theEdit;
-        mybutton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        mybutton.setOnClickListener( view -> {
                 String editString = myedit.getText().toString();
                 mytext.setText("Your edit text has: " + editString);
-            }
         });
 
 //        setContentView(R.layout.activity_main);
