@@ -3,4 +3,5 @@
     <string name="app_name">Lee\'s Android Labs</string>
     <string name="hello_message">你好</string>
     <string name="button_message">按鈕</string>
+    <string name="spin_message">旋轉國旗</string>
 </resources>
