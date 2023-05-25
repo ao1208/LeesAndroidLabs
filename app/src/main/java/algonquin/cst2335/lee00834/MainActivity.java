@@ -35,6 +35,24 @@ public class MainActivity extends AppCompatActivity {
             variableBinding.theText.setText(model.editString.getValue());
         });
 
+        model.isSelected.observe(this, selected -> {
+            variableBinding.theCheckbox.setChecked(selected);
+            variableBinding.theRadio.setChecked(selected);
+            variableBinding.theSwitch.setChecked(selected);
+        });
+
+        variableBinding.theCheckbox.setOnCheckedChangeListener( ( btn , isChecked) -> {
+            model.isSelected.postValue(isChecked) ;//set to b, notify all observers
+        });
+
+        variableBinding.theRadio.setOnCheckedChangeListener( ( btn, isChecked) -> {
+            model.isSelected.postValue(isChecked) ;//set to b, notify all observers
+        });
+
+        variableBinding.theSwitch.setOnCheckedChangeListener( (btn, isChecked) -> {
+            model.isSelected.postValue(isChecked) ;//set to b, notify all observers
+        });
+
 //        setContentView(R.layout.activity_main);
 //        TextView mytext = findViewById(R.id.theText);
 //        Button mybutton = findViewById(R.id.theButton);
