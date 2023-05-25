@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import algonquin.cst2335.lee00834.MainViewModel;
 import algonquin.cst2335.lee00834.databinding.ActivityMainBinding;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         variableBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(variableBinding.getRoot()); //loads XML on screen
 
-        variableBinding.theButton.setOnClickListener( view -> {
+        variableBinding.theButton.setOnClickListener( click -> {
             model.editString.postValue(variableBinding.theEdit.getText().toString());
             variableBinding.theText.setText(model.editString.getValue());
         });
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
             variableBinding.theCheckbox.setChecked(selected);
             variableBinding.theRadio.setChecked(selected);
             variableBinding.theSwitch.setChecked(selected);
+            Toast.makeText(this, "The value is now: " + selected, Toast.LENGTH_SHORT).show();
         });
 
         variableBinding.theCheckbox.setOnCheckedChangeListener( ( btn , isChecked) -> {
@@ -51,6 +53,12 @@ public class MainActivity extends AppCompatActivity {
 
         variableBinding.theSwitch.setOnCheckedChangeListener( (btn, isChecked) -> {
             model.isSelected.postValue(isChecked) ;//set to b, notify all observers
+        });
+
+        variableBinding.theImageButton.setOnClickListener( click -> {
+            int width = variableBinding.theImageButton.getWidth();
+            int height = variableBinding.theImageButton.getHeight();
+            Toast.makeText(this, "The width = " + width + " and height = " + height, Toast.LENGTH_SHORT).show();
         });
 
 //        setContentView(R.layout.activity_main);

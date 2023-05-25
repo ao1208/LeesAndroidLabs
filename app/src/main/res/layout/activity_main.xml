@@ -18,7 +18,6 @@
         android:id="@+id/theButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
         android:text="@string/button_message"
         android:textSize="30dp" />
 
@@ -26,6 +25,7 @@
         android:id="@+id/theEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:hint="@string/hinttext"
         android:text="@string/edit_message"
         android:textSize="30dp" />
@@ -34,18 +34,35 @@
         android:id="@+id/theCheckbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Do you drink coffee?" />
+        android:text="Do you drink coffee?"
+        android:textSize="20dp" />
 
     <RadioButton
         android:id="@+id/theRadio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Do you drink coffee?" />
+        android:text="Do you drink coffee?"
+        android:textSize="20dp" />
 
     <Switch
         android:id="@+id/theSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Do you drink coffee?" />
+        android:text="Do you drink coffee?"
+        android:textSize="20dp" />
+
+    <ImageView
+        android:id="@+id/theImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/logo_algonquin" />
+
+    <ImageButton
+        android:id="@+id/theImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/logo_algonquin" />
 
 </LinearLayout>
