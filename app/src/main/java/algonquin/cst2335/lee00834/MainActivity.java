@@ -2,9 +2,13 @@ package algonquin.cst2335.lee00834;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+
+import java.io.File;
 
 import algonquin.cst2335.lee00834.databinding.ActivityMainBinding;
 
@@ -32,13 +36,26 @@ public class MainActivity extends AppCompatActivity {
             nextPage.putExtra("Password", binding.passwdText.getText().toString());
 
             //go to another page
-            startActivity(nextPage);
+            startActivity(nextPage); //carries all the data to the next page
         });
 
-
+//        //where you can save files: returns a File object representing the directory
+//        // where the app is running from, called the Sandbox.
+//        File myDir = getFilesDir();
+//        String path = myDir.getAbsolutePath();
+//
+//        // Context.MODE_PRIVATE: only this app that created the file can open it.
+//        SharedPreferences savedprefs = getSharedPreferences("MyFileName", Context.MODE_PRIVATE);
+//
+//        //get an editor
+//        SharedPreferences.Editor edit = savedprefs.edit();
+//
+//        binding.emailText.setText(
+//                savedprefs.getString("NAME", "default")
+//        );
     }
 
-    @Override
+    @Override //now visible, not listening for clicks
     protected void onStart() {
         super.onStart();
         Log.e(TAG, "In onStart()");
@@ -50,19 +67,19 @@ public class MainActivity extends AppCompatActivity {
         Log.e(TAG, "In onResume()");
     }
 
-    @Override
+    @Override //leaving the screen, no longer listening for input
     protected void onPause() {
         super.onPause();
         Log.e(TAG, "In onPause()");
     }
 
-    @Override
+    @Override //no longer visible on screen
     protected void onStop() {
         super.onStop();
         Log.e(TAG, "In onStop()");
     }
 
-    @Override
+    @Override //garbage collected, app is gone
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "In onDestroy()");

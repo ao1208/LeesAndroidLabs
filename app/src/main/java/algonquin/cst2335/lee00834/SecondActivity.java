@@ -44,23 +44,23 @@ public class SecondActivity extends AppCompatActivity {
             startActivity(call);
         });
 
-//        binding.changeButton.setOnClickListener( click -> {
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            ActivityResultLauncher<Intent> cameraResult = registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    new ActivityResultCallback<ActivityResult>(){
-                        @Override
-                        public void onActivityResult(ActivityResult result) {
-                            if (result.getResultCode() == Activity.RESULT_OK) {
-                                Intent data = result.getData();
-                                Bitmap thumbnail = data.getParcelableExtra("data");
-                                ImageView profileImage = null;
-                                profileImage.setImageBitmap (thumbnail);
-                            }
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        ActivityResultLauncher<Intent> cameraResult = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>(){
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            Bitmap bitmap = data.getParcelableExtra("data");
+                            binding.image.setImageBitmap (bitmap);
                         }
-                    });
+                    }
+                });
+
+        binding.changeButton.setOnClickListener( click -> {
             cameraResult.launch(cameraIntent);
-//        });
+        });
 
     }
 }
