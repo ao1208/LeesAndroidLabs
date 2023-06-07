@@ -2,5 +2,5 @@
 <resources>
     <string name="app_name">Lee\'s Android Labs</string>
     <string name="hello_message">你好</string>
-    <string name="button_message">按鈕</string>
+    <string name="button_message">登入</string>
 </resources>
