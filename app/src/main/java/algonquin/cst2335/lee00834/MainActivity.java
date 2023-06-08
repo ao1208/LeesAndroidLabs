@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.EditText;
 
 import java.io.File;
 
@@ -26,14 +27,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         Log.e(TAG, "In onCreate()");
 
+        // Sets history email address
+        SharedPreferences prefs = getSharedPreferences("myData", MODE_PRIVATE);
+        binding.emailText.setText(prefs.getString("Email", ""));
+
+        // Sets login button's on-click listener
         binding.loginButton.setOnClickListener( click -> {
             Log.e(TAG, "You clicked the button");
 
             //where to go:                   leaving here    going to SecondActivity
             Intent nextPage = new Intent( this, SecondActivity.class);
-
             nextPage.putExtra("Email", binding.emailText.getText().toString());
-            nextPage.putExtra("Password", binding.passwdText.getText().toString());
 
             //go to another page
             startActivity(nextPage); //carries all the data to the next page
@@ -71,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.e(TAG, "In onPause()");
+
+        // Saves the email address into Shared Preferences
+        SharedPreferences.Editor editor = getSharedPreferences("myData", Context.MODE_PRIVATE).edit();
+        editor.putString("Email", binding.emailText.getText().toString());
+        editor.apply();
     }
 
     @Override //no longer visible on screen
