@@ -9,13 +9,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleView"
-        android:layout_width="0dp"
+        android:layout_width="400dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textInput"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/textInput"
@@ -31,7 +29,6 @@
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:text="SEND"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -40,19 +37,19 @@
         android:id="@+id/receiveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:text="RECEIVE"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="@id/recycleView" />
 
     <FrameLayout
         android:id="@+id/fragmentLocation"
         android:layout_width="0dp"
         android:layout_height="0dp"
-
-        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/blue_200"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/recycleView"
+        app:layout_constraintTop_toTopOf="@+id/recycleView" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

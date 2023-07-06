@@ -3,6 +3,8 @@ package algonquin.cst2335.lee00834;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,6 +66,26 @@ public class ChatRoom extends AppCompatActivity {
                 runOnUiThread( () ->  binding.recycleView.setAdapter( myAdapter ));
             });
         }
+
+        //register as a listener to the MutableLiveData object
+        chatModel.selectedMessage.observe( this, selectedChatMessage -> {
+
+            if(selectedChatMessage != null) {
+                //This is a Singleton object
+                FragmentManager fMgr = getSupportFragmentManager();
+                FragmentTransaction tx = fMgr.beginTransaction();
+                //What to show:
+                MessageDetailsFragment chatFragment = new MessageDetailsFragment(selectedChatMessage);
+                //Where to load:
+                // This line actually loads the fragment into the specified FrameLayout
+                tx.replace(R.id.fragmentLocation, chatFragment);
+                // Back to previous step
+                tx.addToBackStack("anything here");
+                tx.commit();
+                // Another written codes using Builder Pattern:
+                // getSupportFragmentManager().beginTransaction().add(R.id.fragmentLocation, chatFragment).commit();
+            }
+           });
 
         binding.recycleView.setAdapter( myAdapter = new RecyclerView.Adapter<MyRowHolder>() {
 
@@ -177,31 +199,34 @@ public class ChatRoom extends AppCompatActivity {
             itemView.setOnClickListener( click ->{
                 int position = getAbsoluteAdapterPosition();
 
-                AlertDialog.Builder builder = new AlertDialog.Builder( ChatRoom.this );
-                builder.setTitle( "Question:" )
-                        .setMessage( "Do you want to delete the message: " + messageText.getText() )
-                        .setPositiveButton( "No" , (dialog, cl) -> {})
-                        .setNegativeButton( "Yes" , (dialog, cl) -> {
-                            ChatMessage removeMessage = chatMessages.get(position);
-                            // Deletes the chatMessage in the Database and runs in another thread
-                            Executors.newSingleThreadExecutor().execute(() -> {
-                                myDAO.deleteMessage(removeMessage);
-                            });
-                            chatMessages.remove(position);
-                            myAdapter.notifyItemRemoved(position);
-                                                                                    //position starts from 0
-                            Snackbar.make( messageText, "You deleted message #" + (position + 1), Snackbar.LENGTH_LONG)
-                                    .setAction("Undo", clk -> {
-                                        // Re-inserts the chatMessage into the Database
-                                        Executors.newSingleThreadExecutor().execute(() -> {
-                                            myDAO.insertMessage(removeMessage);
-                                        });
-                                        chatMessages.add(position, removeMessage);
-                                        myAdapter.notifyItemInserted(position);
-                                    })
-                                    .show();
-                        })
-                        .create().show(); //actually make the window appear
+                ChatMessage selected = chatMessages.get(position);
+                chatModel.selectedMessage.postValue(selected);
+
+//                AlertDialog.Builder builder = new AlertDialog.Builder( ChatRoom.this );
+//                builder.setTitle( "Question:" )
+//                        .setMessage( "Do you want to delete the message: " + messageText.getText() )
+//                        .setPositiveButton( "No" , (dialog, cl) -> {})
+//                        .setNegativeButton( "Yes" , (dialog, cl) -> {
+//                            ChatMessage removeMessage = chatMessages.get(position);
+//                            // Deletes the chatMessage in the Database and runs in another thread
+//                            Executors.newSingleThreadExecutor().execute(() -> {
+//                                myDAO.deleteMessage(removeMessage);
+//                            });
+//                            chatMessages.remove(position);
+//                            myAdapter.notifyItemRemoved(position);
+//                                                                                    //position starts from 0
+//                            Snackbar.make( messageText, "You deleted message #" + (position + 1), Snackbar.LENGTH_LONG)
+//                                    .setAction("Undo", clk -> {
+//                                        // Re-inserts the chatMessage into the Database
+//                                        Executors.newSingleThreadExecutor().execute(() -> {
+//                                            myDAO.insertMessage(removeMessage);
+//                                        });
+//                                        chatMessages.add(position, removeMessage);
+//                                        myAdapter.notifyItemInserted(position);
+//                                    })
+//                                    .show();
+//                        })
+//                        .create().show(); //actually make the window appear
             });
 
             messageText = itemView.findViewById(R.id.message);
