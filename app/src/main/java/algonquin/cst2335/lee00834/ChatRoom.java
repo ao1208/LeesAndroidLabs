@@ -3,6 +3,7 @@ package algonquin.cst2335.lee00834;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -11,9 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -45,6 +49,9 @@ public class ChatRoom extends AppCompatActivity {
 
         binding = ActivityChatRoomBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // adds your toolbar
+        setSupportActionBar(binding.toolbar);
 
         // Access the database:
         myDB = Room.databaseBuilder(getApplicationContext(), MessageDatabase.class, "MyChatMessageDB").build();
@@ -233,4 +240,42 @@ public class ChatRoom extends AppCompatActivity {
             timeText = itemView.findViewById(R.id.time);
         }
     }
+
+    // This function is to load a Menu layout file under the /res/menu folder.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate( R.menu.my_menu, menu );
+
+        return true;
+    }
+    // When user clicks on a menuitem:
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        ChatMessage removeMessage = chatMessages.get(chatMessages.size()-1);
+
+        if (item.getItemId() == R.id.item_delete) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder( ChatRoom.this );
+                builder.setTitle( "Question:" )
+                        .setMessage( "Do you want to delete all messages? " )
+                        .setPositiveButton( "No" , (dialog, cl) -> {})
+                        .setNegativeButton( "Yes" , (dialog, cl) -> {
+                            // Deletes the chatMessage in the Database and runs in another thread
+                            Executors.newSingleThreadExecutor().execute(() -> {
+                                myDAO.deleteMessage(removeMessage);
+                            });
+                            chatMessages.remove(chatMessages.size()-1);
+                            myAdapter.notifyItemRemoved(chatMessages.size()-1);
+                        })
+                        .create().show(); //actually make the window appear
+        }
+        else if (item.getItemId() == R.id.item_about){
+            Toast.makeText( ChatRoom.this ,"Version 1.0, created by Wan-Hsuan",Toast.LENGTH_LONG).show();
+        }
+
+        return true;
+    }
+
 }
