@@ -35,13 +35,14 @@ import algonquin.cst2335.lee00834.databinding.SentMessageBinding;
 
 public class ChatRoom extends AppCompatActivity {
 
-    ActivityChatRoomBinding binding;
-    ChatRoomViewModel chatModel;
+    private ActivityChatRoomBinding binding;
+    private static ChatRoomViewModel chatModel;
     private RecyclerView.Adapter<MyRowHolder> myAdapter;
-    ArrayList<ChatMessage> chatMessages; //= new ArrayList<>()
+    private ArrayList<ChatMessage> chatMessages; //= new ArrayList<>()
 
     MessageDatabase myDB ;
     ChatMessageDAO myDAO;
+    private FragmentManager fMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,14 +76,15 @@ public class ChatRoom extends AppCompatActivity {
         }
 
         //register as a listener to the MutableLiveData object
-        chatModel.selectedMessage.observe( this, selectedChatMessage -> {
+        chatModel.getSelectedMessage().observe( this, selectedChatMessage -> {
 
             if(selectedChatMessage != null) {
                 //This is a Singleton object
-                FragmentManager fMgr = getSupportFragmentManager();
+                fMgr = getSupportFragmentManager();
                 FragmentTransaction tx = fMgr.beginTransaction();
                 //What to show:
                 MessageDetailsFragment chatFragment = new MessageDetailsFragment(selectedChatMessage);
+                fMgr.popBackStack();
                 //Where to load:
                 // This line actually loads the fragment into the specified FrameLayout
                 tx.replace(R.id.fragmentLocation, chatFragment);
@@ -202,12 +204,18 @@ public class ChatRoom extends AppCompatActivity {
         // just initialize the variables
         public MyRowHolder(@NonNull View itemView) {
             super(itemView);
+
+            messageText = itemView.findViewById(R.id.message);
+            timeText = itemView.findViewById(R.id.time);
+
             // Click anywhere on the area of the ConstraintLayout area
             itemView.setOnClickListener( click ->{
                 int position = getAbsoluteAdapterPosition();
 
                 ChatMessage selected = chatMessages.get(position);
-                chatModel.selectedMessage.postValue(selected);
+//                chatModel.selectedMessage.postValue(selected);
+                chatModel.getSelectedMessage().postValue(selected);
+                chatModel.getSelectedRow().postValue(position);
 
 //                AlertDialog.Builder builder = new AlertDialog.Builder( ChatRoom.this );
 //                builder.setTitle( "Question:" )
@@ -235,9 +243,6 @@ public class ChatRoom extends AppCompatActivity {
 //                        })
 //                        .create().show(); //actually make the window appear
             });
-
-            messageText = itemView.findViewById(R.id.message);
-            timeText = itemView.findViewById(R.id.time);
         }
     }
 
@@ -252,26 +257,30 @@ public class ChatRoom extends AppCompatActivity {
     }
     // When user clicks on a menuitem:
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        super.onOptionsItemSelected(item);
+        int itemId = item.getItemId();
+        ChatMessage theMessage = chatModel.getSelectedMessage().getValue();
 
-        ChatMessage removeMessage = chatMessages.get(chatMessages.size()-1);
-
-        if (item.getItemId() == R.id.item_delete) {
+        if (itemId == R.id.item_delete && theMessage != null) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder( ChatRoom.this );
                 builder.setTitle( "Question:" )
-                        .setMessage( "Do you want to delete all messages? " )
+                        .setMessage( "Do you want to delete the chat message?" )
                         .setPositiveButton( "No" , (dialog, cl) -> {})
                         .setNegativeButton( "Yes" , (dialog, cl) -> {
+                            int selectedRow = chatModel.getSelectedRow().getValue();
                             // Deletes the chatMessage in the Database and runs in another thread
                             Executors.newSingleThreadExecutor().execute(() -> {
-                                myDAO.deleteMessage(removeMessage);
+                                myDAO.deleteMessage(theMessage);
                             });
-                            chatMessages.remove(chatMessages.size()-1);
-                            myAdapter.notifyItemRemoved(chatMessages.size()-1);
+                            chatMessages.remove(selectedRow);
+                            myAdapter.notifyItemRemoved(selectedRow);
+                            fMgr.popBackStack();
+                            chatModel.getSelectedMessage().postValue(null);
                         })
                         .create().show(); //actually make the window appear
         }
-        else if (item.getItemId() == R.id.item_about){
+        else if (itemId == R.id.item_about){
             Toast.makeText( ChatRoom.this ,"Version 1.0, created by Wan-Hsuan",Toast.LENGTH_LONG).show();
         }
 
