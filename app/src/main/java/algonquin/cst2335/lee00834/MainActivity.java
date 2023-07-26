@@ -4,13 +4,17 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,27 +36,35 @@ import algonquin.cst2335.lee00834.databinding.ActivityMainBinding;
 
 /**
  * This page represents the first page loaded
+ *
  * @author Wan-Hsuan Lee
  * @version 1.0
  */
 public class MainActivity extends AppCompatActivity {
-    ActivityMainBinding binding;
+
     // for sending network requests:
     protected RequestQueue queue = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);//calling onCreate from parent class
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
         //loads an XML file on the page
         setContentView(R.layout.activity_main);
+
+        final EditText editText = (EditText) findViewById(R.id.theEditText);
+        final TextView tempView = (TextView) findViewById(R.id.temp);
+        final TextView maxTempView = (TextView) findViewById(R.id.maxTemp);
+        final TextView minTempView = (TextView) findViewById(R.id.minTemp);
+        final TextView humidityView = (TextView) findViewById(R.id.humidity);
+        final TextView descriptionView = (TextView) findViewById(R.id.description);
+        final ImageView icon = (ImageView) findViewById(R.id.icon);
 
         //This part goes at the top of the onCreate function:
         queue = Volley.newRequestQueue(this);
 
-        binding.getForecast.setOnClickListener(click -> {
+        findViewById(R.id.theButton).setOnClickListener(click -> {
 
-            String cityName = binding.theEditText.getText().toString();
+            String cityName = editText.getText().toString();
 
             //server name and parameters:                           name=value&name2=value2&name3=value3
             String url = "https://api.openweathermap.org/data/2.5/weather?q=" +
@@ -64,52 +76,59 @@ public class MainActivity extends AppCompatActivity {
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                     (successfulResponse) -> {
                         try {
-                            String name = successfulResponse.getString( "name" );
-                            JSONObject coord = successfulResponse.getJSONObject( "coord" );
+                            String name = successfulResponse.getString("name");
+                            JSONObject coord = successfulResponse.getJSONObject("coord");
                             int vis = successfulResponse.getInt("visibility");
 
-                            JSONArray weatherArray = successfulResponse.getJSONArray( "weather");
-                            JSONObject pos0 = weatherArray.getJSONObject( 0 );
+                            JSONArray weatherArray = successfulResponse.getJSONArray("weather");
+                            JSONObject pos0 = weatherArray.getJSONObject(0);
                             String description = pos0.getString("description");
                             String iconName = pos0.getString("icon");
-                            String imageURL = "http://openweathermap.org/img/w/" + iconName + ".png";
+                            String imageURL = "https://openweathermap.org/img/w/" + iconName + ".png";
 
-                            JSONObject main = successfulResponse.getJSONObject( "main"  );
+                            JSONObject main = successfulResponse.getJSONObject("main");
                             double temp = main.getDouble("temp");
                             double max = main.getDouble("temp_max");
                             double min = main.getDouble("temp_min");
                             int humidity = main.getInt("humidity");
 
                             runOnUiThread(() -> {
-                                binding.temp.setText("The temperature is " + temp + " degrees");
-                                binding.temp.setVisibility(View.VISIBLE);
-                                binding.maxTemp.setText("The temperature is " + max + " degrees");
-                                binding.maxTemp.setVisibility(View.VISIBLE);
-                                binding.minTemp.setText("The temperature is " + min + " degrees");
-                                binding.minTemp.setVisibility(View.VISIBLE);
-                                binding.humidity.setText("The temperature is " + humidity + " degrees");
-                                binding.humidity.setVisibility(View.VISIBLE);
-                                binding.description.setText("The temperature is " + description + " degrees");
-                                binding.description.setVisibility(View.VISIBLE);
+                                tempView.setText("currentTemp: " + temp + " degrees");
+                                tempView.setVisibility(View.VISIBLE);
+                                maxTempView.setText("maxTemp: " + max + " degrees");
+                                maxTempView.setVisibility(View.VISIBLE);
+                                minTempView.setText("minTemp: " + min + " degrees");
+                                minTempView.setVisibility(View.VISIBLE);
+                                humidityView.setText("Humidity: " + humidity);
+                                humidityView.setVisibility(View.VISIBLE);
+                                descriptionView.setText("DESC: " + description);
+                                descriptionView.setVisibility(View.VISIBLE);
                             });
 
                             String imageFilePath = getFilesDir().getPath() + "/" + iconName + ".png";
                             File imageFile = new File(imageFilePath);
                             if (imageFile.exists()) {
                                 Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
-                                runOnUiThread(() -> binding.icon.setImageBitmap(bitmap));
+                                runOnUiThread(() -> icon.setImageBitmap(bitmap));
                             } else {
-                                ImageRequest imgReq = new ImageRequest(imageURL, new Response.Listener<Bitmap>() {
+
+                                int startIndex = imageURL.lastIndexOf("/") + 1;
+                                String iName = imageURL.substring(startIndex);
+                                ImageRequest imgReq = new ImageRequest(
+                                        imageURL, new Response.Listener<Bitmap>() {
                                     @Override
                                     public void onResponse(Bitmap bitmap) {
+                                        runOnUiThread(() -> icon.setImageBitmap(bitmap));
                                         try {
-                                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, openFileOutput(iconName, MODE_PRIVATE));
+                                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, openFileOutput(iName, MODE_PRIVATE));
                                         } catch (FileNotFoundException e) {
                                             throw new RuntimeException(e);
                                         }
                                     }
                                 }, 1024, 1024, ImageView.ScaleType.CENTER, null,
                                         (error) -> {
+                                            Log.e("12312312313123", "123131313123");
+                                            Toast.makeText(MainActivity.this, imageURL, Toast.LENGTH_LONG).show();
                                             int i = 0;
                                         });
                                 queue.add(imgReq);

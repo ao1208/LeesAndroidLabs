@@ -34,7 +34,7 @@
         app:layout_constraintTop_toBottomOf="@+id/theTextView" />
 
     <Button
-        android:id="@+id/getForecast"
+        android:id="@+id/theButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -50,11 +50,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="invisible"
+        android:layout_marginTop="16dp"
         android:text="Temp goes here"
         android:textSize="24dp"
-        app:layout_constraintTop_toBottomOf="@+id/theButton"/>
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/theButton"
+        app:layout_constraintStart_toStartOf="@+id/theButton"
+        app:layout_constraintTop_toBottomOf="@+id/theButton" />
 
     <TextView
         android:id="@+id/maxTemp"
