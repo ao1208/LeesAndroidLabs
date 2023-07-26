@@ -50,7 +50,11 @@ public class MainActivity extends AppCompatActivity {
         //This part goes at the top of the onCreate function:
         queue = Volley.newRequestQueue(this);
 
-        binding.getForecast.setOnClickListener(click -> {
+        binding.getForecast.setOnClickListener(click->{
+            ((Button) click).setText("123");
+        });
+
+        binding.theButton.setOnClickListener(click -> {
 
             String cityName = binding.theEditText.getText().toString();
 
@@ -58,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
             String url = "https://api.openweathermap.org/data/2.5/weather?q=" +
                     URLEncoder.encode(cityName) //replace spaces, &. = with other characters
                     + "&appid=7e943c97096a9784391a981c4d878b22&units=metric";
-
-            Log.e("URL", url);
 
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                     (successfulResponse) -> {
